@@ -195,7 +195,7 @@ export default function Intro({ onStarted, onDone }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2, duration: 1 }}
                 >
-                  Touchez pour ouvrir l'invitation
+                  Touchez pour ouvrir
                 </motion.p>
               )}
             </motion.div>

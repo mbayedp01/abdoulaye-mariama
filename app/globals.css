@@ -1201,8 +1201,11 @@ button {
             /* ── Pochette porte-carte (portrait) — la carte en sort ── */
             .sleeve {
               position: relative;
-              width: min(320px, 78vw);
-              height: min(440px, 108vw);
+              /* Largeur bornée par la largeur ET la hauteur d'écran →
+                 l'enveloppe reste entière sur tous les mobiles. */
+              width: min(320px, 80vw, 48svh);
+              aspect-ratio: 32 / 44;
+              height: auto;
               transform-style: preserve-3d;
               filter: drop-shadow(0 40px 60px rgba(150, 120, 70, 0.3))
                 drop-shadow(0 10px 20px rgba(120, 90, 40, 0.16));
@@ -1222,6 +1225,7 @@ button {
               top: 4%;
               height: 92%;
               z-index: 2;
+              overflow: hidden;
               border-radius: 10px;
               background: linear-gradient(170deg, #ffffff, #fbf5ea);
               box-shadow: 0 12px 30px rgba(120, 85, 30, 0.16),
@@ -1230,40 +1234,43 @@ button {
               flex-direction: column;
               align-items: center;
               justify-content: flex-start;
-              gap: 0.5rem;
-              padding: 1.6rem 1.2rem;
+              gap: 0.4rem;
+              padding: 8% 7%;
               text-align: center;
             }
-            .sc-top { margin-bottom: 0.2rem; }
+            .sleeve-card > * {
+              max-width: 100%;
+            }
+            .sc-top { margin-bottom: 0.1rem; }
             .sc-label {
               font-family: var(--font-sans);
-              font-size: 0.56rem;
-              letter-spacing: 0.22em;
+              font-size: clamp(0.48rem, 2.6vw, 0.56rem);
+              letter-spacing: 0.2em;
               text-transform: uppercase;
               color: var(--ink-mute);
               line-height: 1.7;
-              max-width: 200px;
+              max-width: 22ch;
             }
             .sc-names {
-              font-size: clamp(2rem, 9vw, 2.6rem);
+              font-size: clamp(1.7rem, 8.5vw, 2.6rem);
               color: var(--gold-deep);
               line-height: 1;
-              margin: 0.2rem 0;
+              margin: 0.1rem 0;
             }
             .sc-takku {
               font-family: var(--font-display);
-              font-size: 0.95rem;
-              letter-spacing: 0.2em;
+              font-size: clamp(0.8rem, 3.6vw, 0.95rem);
+              letter-spacing: 0.18em;
               text-transform: uppercase;
               color: var(--gold-deep);
-              margin-top: 0.3rem;
+              margin-top: 0.2rem;
             }
             .sc-date {
               font-family: var(--font-display);
-              font-size: 1.35rem;
+              font-size: clamp(1.1rem, 5vw, 1.35rem);
               letter-spacing: 0.04em;
               color: var(--ink);
-              margin-top: 0.4rem;
+              margin-top: 0.3rem;
             }
             .sc-city {
               font-family: var(--font-sans);
@@ -1347,11 +1354,14 @@ button {
               z-index: 10;
             }
             .sleeve-hint {
-              margin-top: 2.4rem;
+              margin-top: 2.2rem;
+              padding: 0 1rem;
+              max-width: 92vw;
+              text-align: center;
               color: var(--ink-soft);
               font-family: var(--font-sans);
-              font-size: 0.68rem;
-              letter-spacing: 0.32em;
+              font-size: clamp(0.6rem, 3vw, 0.68rem);
+              letter-spacing: clamp(0.16em, 1.4vw, 0.32em);
               text-transform: uppercase;
               animation: pulse 2.4s ease-in-out infinite;
             }
