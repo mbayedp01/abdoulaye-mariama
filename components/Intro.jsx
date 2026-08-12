@@ -28,12 +28,23 @@ export default function Intro({ onStarted, onDone }) {
   }, [phase]);
 
   const open = () => {
-    if (phase !== "ready") return;
-    setPhase("opening");
-    onStarted?.();
-    setTimeout(() => onDone?.(), 2800);
-    setTimeout(() => setPhase("gone"), 3600);
+    setPhase((p) => {
+      if (p !== "ready") return p;
+      onStarted?.();
+      setTimeout(() => onDone?.(), 2800);
+      setTimeout(() => setPhase("gone"), 3600);
+      return "opening";
+    });
   };
+
+  // Ouverture AUTOMATIQUE : dès que l'enveloppe est en place, elle s'ouvre
+  // seule et enchaîne sur l'invitation (le clic ne fait que l'ouvrir plus tôt).
+  useEffect(() => {
+    if (phase !== "ready") return;
+    const t = setTimeout(() => open(), 1900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   const opening = phase === "opening";
 
@@ -193,9 +204,9 @@ export default function Intro({ onStarted, onDone }) {
                   className="sleeve-hint"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2, duration: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
                 >
-                  Touchez pour ouvrir
+                  Ouverture de votre invitation…
                 </motion.p>
               )}
             </motion.div>

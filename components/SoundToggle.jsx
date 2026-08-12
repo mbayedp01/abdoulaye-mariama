@@ -43,7 +43,7 @@ export default function SoundToggle({ started }) {
     else a.addEventListener("loadedmetadata", go, { once: true });
   };
 
-  // Démarrage auto à l'ouverture de l'enveloppe
+  // Démarrage auto à l'ouverture (automatique) de l'enveloppe
   useEffect(() => {
     if (started && !triggered.current) {
       triggered.current = true;
@@ -51,16 +51,39 @@ export default function SoundToggle({ started }) {
     }
   }, [started]);
 
-  // À chaque boucle, repartir de la 50e seconde
+  // Filet de sécurité : si le navigateur bloque la lecture automatique
+  // (pas de clic délibéré), on démarre la musique au premier geste de
+  // l'utilisateur (toucher, clic, molette, touche).
+  useEffect(() => {
+    const kickstart = () => {
+      const a = audioRef.current;
+      if (a && a.paused) playFrom50();
+    };
+    const evts = ["pointerdown", "touchstart", "keydown", "wheel"];
+    evts.forEach((e) => window.addEventListener(e, kickstart, { once: true, passive: true }));
+    return () => evts.forEach((e) => window.removeEventListener(e, kickstart));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Boucle FLUIDE à partir de la 50e seconde (au lieu de reprendre à 0)
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
+    const onTime = () => {
+      if (a.duration && a.currentTime >= a.duration - 0.3) {
+        seekToStart(a);
+      }
+    };
     const onEnded = () => {
       seekToStart(a);
       a.play().catch(() => {});
     };
+    a.addEventListener("timeupdate", onTime);
     a.addEventListener("ended", onEnded);
-    return () => a.removeEventListener("ended", onEnded);
+    return () => {
+      a.removeEventListener("timeupdate", onTime);
+      a.removeEventListener("ended", onEnded);
+    };
   }, []);
 
   const toggle = () => {
